@@ -30,18 +30,15 @@ export const ProjectProvider: React.FC<{
         inputs: [], // according to the docs, this field is optional, but 400 is raised if it's skipped - [] is sufficient
       }
 
-      const result = await postProperty({
+      await postProperty({
         apiKey,
         workspaceId,
         projectId,
         // @ts-expect-error types are wrong according to the docs
         propertyData,
       })
-
-      alert(`Property created successfully! ID: ${result.id}`)
     } catch (error) {
       console.error('Failed to create property:', error)
-      alert(`Failed to create property: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
