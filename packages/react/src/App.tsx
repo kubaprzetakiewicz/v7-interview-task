@@ -4,6 +4,7 @@ import { CommandMenu } from './components/CommandMenu'
 import { EntityView } from './components/EntityView'
 import { FallbackPage } from './components/FallbackPage'
 import { ProjectTable } from './components/ProjectTable'
+import { TestButton } from './components/TestButton'
 import { ProjectProvider } from './contexts/Project/ProjectProvider'
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
               index
               element={
                 <ProjectProvider>
+                  <TestButton />
                   <ProjectTable />
                 </ProjectProvider>
               }
