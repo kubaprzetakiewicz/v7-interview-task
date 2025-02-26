@@ -2,6 +2,10 @@ import { useProjectContext } from '@/contexts/Project/useProjectContext'
 import { KeyboardEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useCommandTriggerEvent } from '../hooks/useCommandTriggerEvent'
 
+type CommandUsage = {
+  [commandId: string]: number
+}
+
 export type Command = {
   id: string
   name: string
@@ -12,19 +16,59 @@ export function CommandMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [currentCommandIdx, setCurrentCommandIdx] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [commandUsage, setCommandUsage] = useState<CommandUsage>({})
   const dialogRef = useRef<HTMLDialogElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { commands } = useProjectContext()
 
-  const filteredCommands = useMemo(
-    () => commands.filter((command) => command.name.toLowerCase().includes(searchQuery.toLowerCase())),
-    [
-      // `commands` won't change anyway, but hey, rules of hooks
-      commands,
-      searchQuery,
-    ],
-  )
+  useEffect(() => {
+    try {
+      const storedUsage = localStorage.getItem('commandUsage')
+      if (storedUsage) {
+        setCommandUsage(JSON.parse(storedUsage))
+      }
+    } catch (error) {
+      // it's not critical
+      console.debug('Could not load command usage data', error)
+    }
+  }, [])
+
+  const trackCommandUsage = (commandId: string) => {
+    const newUsage = {
+      ...commandUsage,
+      [commandId]: (commandUsage[commandId] || 0) + 1,
+    }
+    setCommandUsage(newUsage)
+
+    try {
+      localStorage.setItem('commandUsage', JSON.stringify(newUsage))
+    } catch (error) {
+      // it's not critical
+      console.debug('Failed to save command usage data:', error)
+    }
+  }
+
+  const filteredCommands = useMemo(() => {
+    const filtered = commands.filter((command) => command.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    if (searchQuery) {
+      return filtered.sort((a, b) => {
+        const aExact = a.name.toLowerCase() === searchQuery.toLowerCase()
+        const bExact = b.name.toLowerCase() === searchQuery.toLowerCase()
+        if (aExact && !bExact) return -1
+        if (!aExact && bExact) return 1
+
+        return (commandUsage[b.id] || 0) - (commandUsage[a.id] || 0)
+      })
+    }
+
+    return filtered.sort((a, b) => (commandUsage[b.id] || 0) - (commandUsage[a.id] || 0))
+  }, [
+    // `commands` won't change anyway, but hey, rules of hooks
+    commands,
+    searchQuery,
+    commandUsage,
+  ])
 
   useCommandTriggerEvent(() => {
     setIsOpen((prev) => !prev)
@@ -71,9 +115,12 @@ export function CommandMenu() {
   }
 
   const handleCommandAction = (command: Command) => {
+    trackCommandUsage(command.id)
     command.action()
     setIsOpen(false)
     setSearchQuery('')
+    // we need this now, because the commands might be reordered due to how often they're used
+    setCurrentCommandIdx(0)
   }
 
   const handleDialogClose = () => {
@@ -129,5 +176,3 @@ export function CommandMenu() {
     </dialog>
   )
 }
-
-
