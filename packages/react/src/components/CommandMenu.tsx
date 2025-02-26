@@ -1,20 +1,19 @@
+import { useProjectContext } from '@/contexts/Project/useProjectContext'
 import { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useCommandTriggerEvent } from '../hooks/useCommandTriggerEvent'
 
-type Command = {
+export type Command = {
   id: string
   name: string
   action: () => void
 }
 
-type Props = {
-  commands: Command[]
-}
-
-export function CommandMenu({ commands }: Props) {
+export function CommandMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [currentCommandIdx, setCurrentCommandIdx] = useState(0)
   const dialogRef = useRef<HTMLDialogElement>(null)
+
+  const { commands } = useProjectContext()
 
   useCommandTriggerEvent(() => {
     setIsOpen((prev) => !prev)

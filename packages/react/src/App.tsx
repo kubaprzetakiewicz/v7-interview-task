@@ -4,7 +4,6 @@ import { CommandMenu } from './components/CommandMenu'
 import { EntityView } from './components/EntityView'
 import { FallbackPage } from './components/FallbackPage'
 import { ProjectTable } from './components/ProjectTable'
-import { TestButton } from './components/TestButton'
 import { ProjectProvider } from './contexts/Project/ProjectProvider'
 
 function App() {
@@ -12,20 +11,6 @@ function App() {
 
   return (
     <>
-      <CommandMenu
-        commands={[
-          {
-            id: '1',
-            name: 'Add a property',
-            action: () => alert('yay'),
-          },
-          {
-            id: '2',
-            name: 'Action #2',
-            action: () => alert('wahoo'),
-          },
-        ]}
-      />
       <BrowserRouter>
         <Routes>
           <Route path="/:workspaceId/projects/:projectId">
@@ -34,7 +19,7 @@ function App() {
               index
               element={
                 <ProjectProvider>
-                  <TestButton />
+                  <CommandMenu />
                   <ProjectTable />
                 </ProjectProvider>
               }
@@ -45,6 +30,7 @@ function App() {
               path="entities/:entityId"
               element={
                 <ProjectProvider>
+                  <CommandMenu />
                   <EntityView />
                 </ProjectProvider>
               }
