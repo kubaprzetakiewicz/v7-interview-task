@@ -1,6 +1,6 @@
 import { Entity, getEntities, getProject, Project } from '@v7-product-interview-task/api'
 import { postProperty } from '@v7-product-interview-task/api/src/postProperty'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { ProjectContext } from './useProjectContext'
 
@@ -9,8 +9,38 @@ export const ProjectProvider: React.FC<{
 }> = ({ children }) => {
   const [project, setProject] = useState<Project | null>(null)
   const [entities, setEntities] = useState<Entity[]>([])
+  const [refreshCounter, setRefreshCounter] = useState(0)
 
   const { workspaceId, projectId } = useParams() as { workspaceId: string; projectId: string }
+
+  const loadData = useCallback(async () => {
+    const apiKey = import.meta.env.VITE_API_KEY
+    if (!apiKey) {
+      throw new Error('VITE_API_KEY env variable is not set')
+    }
+
+    try {
+      const [projectData, entityData] = await Promise.all([
+        getProject({
+          apiKey,
+          projectId,
+          workspaceId,
+        }),
+        getEntities({
+          apiKey,
+          projectId,
+          workspaceId,
+        }),
+      ])
+
+      setProject(projectData)
+      setEntities(entityData)
+    } catch (error) {
+      console.error('Failed to load data:', error)
+      setEntities([])
+      setProject(null)
+    }
+  }, [projectId, workspaceId])
 
   // this ideally shouldn't be here, but doing it for time's sake & easy access to URI params
   const handleCreateTextProperty = async () => {
@@ -37,41 +67,16 @@ export const ProjectProvider: React.FC<{
         // @ts-expect-error types are wrong according to the docs
         propertyData,
       })
+
+      setRefreshCounter((prev) => prev + 1)
     } catch (error) {
       console.error('Failed to create property:', error)
     }
   }
 
   useEffect(() => {
-    const load = async () => {
-      const apiKey = import.meta.env.VITE_API_KEY
-      if (!apiKey) {
-        throw new Error('VITE_API_KEY env variable is not set')
-      }
-
-      try {
-        const [projectData, entityData] = await Promise.all([
-          getProject({
-            apiKey,
-            projectId,
-            workspaceId,
-          }),
-          getEntities({
-            apiKey,
-            projectId,
-            workspaceId,
-          }),
-        ])
-
-        setProject(projectData)
-        setEntities(entityData)
-      } catch {
-        setEntities([])
-        setProject(null)
-      }
-    }
-    load()
-  }, [projectId, workspaceId])
+    loadData()
+  }, [loadData, refreshCounter])
 
   const value = {
     project,
