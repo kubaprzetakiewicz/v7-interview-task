@@ -61,31 +61,35 @@ export function CommandMenu() {
   return (
     <dialog
       ref={dialogRef}
-      className="w-full max-w-xl bg-gray-900 text-white rounded-lg shadow-2xl overflow-hidden p-0 backdrop:bg-black/50"
+      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] bg-gray-900/95 text-white rounded-xl shadow-2xl overflow-hidden p-0 backdrop:bg-black/40 border border-gray-700"
       onClose={handleDialogClose}
       onKeyDown={handleKeyDown}
       tabIndex={-1}
+      style={{
+        maxWidth: '90vw',
+        height: 'auto',
+      }}
     >
-      <div className="max-h-[60vh] overflow-y-auto">
-        <ul>
-          {commands.map((command, index) => (
-            <li
-              key={command.id}
-              className={`p-3 flex items-center justify-between cursor-pointer ${
-                index === currentCommandIdx ? 'bg-blue-900' : 'hover:bg-gray-800'
-              }`}
-              onClick={() => handleCommandAction(command)}
-              onMouseEnter={() => setCurrentCommandIdx(index)}
-            >
-              <div className="flex items-center">
-                <div>
-                  <div className="font-medium">{command.name}</div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <div className="px-4 py-3">
+        <div className="max-h-[60vh] overflow-y-auto">
+          <ul>
+            {commands.map((command, index) => (
+              <li
+                key={command.id}
+                className={`px-3 py-4 flex items-center justify-between cursor-pointer rounded-lg transition-colors ${
+                  index === currentCommandIdx ? 'bg-gray-800' : 'hover:bg-gray-800/50'
+                }`}
+                onClick={() => handleCommandAction(command)}
+                onMouseEnter={() => setCurrentCommandIdx(index)}
+              >
+                <div className="text-base font-normal">{command.name}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </dialog>
   )
 }
+
+

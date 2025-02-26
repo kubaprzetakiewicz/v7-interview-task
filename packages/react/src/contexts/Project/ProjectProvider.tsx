@@ -87,6 +87,11 @@ export const ProjectProvider: React.FC<{
         name: 'Create Text Property',
         action: handleCreateTextProperty,
       },
+      {
+        id: 'create-number-property',
+        name: 'Create Number Property',
+        action: () => {},
+      },
     ],
   }
 
