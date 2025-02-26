@@ -12,12 +12,12 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@v7-product-interview-task/api": "*",
     "@vueuse/core": "^10.11.0",
     "phoenix": "^1.7.14",
     "pinia": "^2.1.7",
     "vue": "^3.4.29",
-    "vue-router": "^4.3.3",
-    "@v7-product-interview-task/api": "*"
+    "vue-router": "^4.3.3"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
@@ -30,8 +30,8 @@
     "jsdom": "^24.1.0",
     "npm-run-all2": "^6.2.0",
     "typescript": "~5.4.0",
-    "vite": "^5.3.1",
-    "vitest": "^1.6.0",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.7",
     "vue-tsc": "^2.0.21"
   }
 }

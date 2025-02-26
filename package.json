@@ -5,5 +5,9 @@
   ],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.8"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.9",
+    "tailwindcss": "^4.0.9"
   }
 }

@@ -1,27 +1,28 @@
-import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { fileURLToPath, URL } from "node:url";
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   server: {
     cors: false,
     proxy: {
-      "/api": {
-        target: "https://go.v7labs.com",
+      '/api': {
+        target: 'https://go.v7labs.com',
         changeOrigin: true,
       },
-      "/ws": {
-        target: "wss://go.v7labs.com",
+      '/ws': {
+        target: 'wss://go.v7labs.com',
         rewriteWsOrigin: true,
         ws: true,
       },
     },
   },
-});
+})
